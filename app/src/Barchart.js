@@ -1,8 +1,23 @@
 import React from 'react';
 import * as d3 from 'd3';
+import styled from 'styled-components';
 
 const Bar = ({ data, y, width, thickness }) => {
-    return ( <rect x={0} y={y} width={width} height={thickness} fill="white" />)
+
+    const Label = styled.text`
+    fill: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    font-size: 14px;
+    text-anchor: end;
+    alignment-baseline: middle;
+    `;
+
+    return ( <g transform={`translate(${0}, ${y})`}>
+            <rect x={10} y={0} width={width} height={thickness} fill="white" />
+            <Label y={thickness/2}>{data.name}</Label>
+        </g>)
 }
 //draws for single year
 const Barchart = ({ data, x, y, barThickness, width }) => {
