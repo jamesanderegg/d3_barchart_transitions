@@ -35,16 +35,19 @@ function App() {
   const [currentYear, setCurrentYear] = useState(1970);
 
   const yearIndex = d3
-    .scaleLinear()
-    .domain([1970, 2025]).range([0, 2025 - 1970]);
+    .scaleOrdinal()
+    .domain(d3.range(1970, 2025))
+    .range(d3.range(0, 2025-1970));
   //main animation a simple counter
   useEffect(() => {
     const interval = d3.interval(() => {
-      if (currentYear > 2025) {
-        interval.stop();
-      }
-      setCurrentYear(year => year + 1);
-    }, 1000);
+      setCurrentYear(year => {
+        if(year +1 > 2025){
+          interval.stop();
+        }
+        return year + 1;
+      });
+    }, 3000);
 
     return () => interval.stop();
   }, []);

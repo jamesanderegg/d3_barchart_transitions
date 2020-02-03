@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as d3 from "d3";
 import styled from "styled-components";
 
 const Bar = ({ data, y, width, thickness }) => {
+    const [renderWidth, setRenderWidth] = useState(width);
+
+    useEffect(() => {
+        d3.selection()
+            .transition(`width- ${data.name}`)
+            .duration(3000)
+            .tween(`width-${data.name}`, ()=>{
+                const interpolate = d3.interpolate(renderWidth, width);
+                return t => setRenderWidth(interpolate(t));
+            })
+
+    }, [width])
   const Label = styled.text`
     fill: white;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
@@ -15,7 +27,7 @@ const Bar = ({ data, y, width, thickness }) => {
 
   return (
     <g transform={`translate(${0}, ${y})`}>
-      <rect x={10} y={0} width={width} height={thickness} fill="white" />
+      <rect x={10} y={0} width={renderWidth} height={thickness} fill="white" />
       <Label y={thickness / 2}>{data.name}</Label>
     </g>
   );
