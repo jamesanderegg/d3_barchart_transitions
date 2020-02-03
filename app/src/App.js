@@ -2,6 +2,9 @@ import React from 'react';
 import styled from "styled-components";
 import * as d3 from 'd3';
 
+import Barchart from "./Barchart"
+
+
 const Svg = styled.svg`
   width: 100vw;
   height: 100vh;
@@ -9,7 +12,7 @@ const Svg = styled.svg`
 `;
 function App() {
   
-  const processors = d3.range(5).map( => ),
+  const processors = d3.range(5).map(_ =>  `1` ),
   random = d3.randomUniform(1000, 50000);
 
   const data = d3.range(1970,2025).map(year => 
@@ -20,7 +23,9 @@ function App() {
   })))
 
   return (
-    <Svg></Svg>
+    <Svg>
+      <Barchart data={data[0]} x={100} y={50} />
+    </Svg>
   );
 }
 
