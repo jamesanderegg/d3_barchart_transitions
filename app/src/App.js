@@ -12,7 +12,7 @@ const Svg = styled.svg`
 `;
 function App() {
   
-  const processors = d3.range(5).map(_ =>  `1` ),
+  const processors = d3.range(5).map(i =>  `${i} CPU` ),
   random = d3.randomUniform(1000, 50000);
 
   const data = d3.range(1970,2025).map(year => 
@@ -24,7 +24,7 @@ function App() {
 
   return (
     <Svg>
-      <Barchart data={data[0]} x={100} y={50} />
+      <Barchart data={data[0]} x={100} y={50} height={500} />
     </Svg>
   );
 }
