@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import * as d3 from "d3";
 
@@ -10,53 +10,102 @@ const Svg = styled.svg`
   background: #0b0c10;
 `;
 
+const Year = styled.text`
+fill: white;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
+font-size: 120px;
+font-weight: bold;
+text-anchor: end;
+`;
+const getTeam = row =>
+  (row['team']);
+const getYear = row =>
+  Number(row['year']);
+const getRank = row =>
+  Number(row['rank']);
+const getOBP = row =>
+    Number(row['obp']);
 const useData = () => {
   const [data, setData] = useState(null);
 
-  useEffect(() => {
-    const processors = d3.range(5).map(i => `${i} CPU`),
-      random = d3.randomUniform(1000, 50000);
 
-    const data = d3.range(1970, 2025).map(year =>
-      d3.range(5).map(i => ({
-        year: year,
-        name: processors[i],
-        transistors: Math.round(random())
-      }))
-    );
-
+  useEffect(function()
+  {
+    (async () => 
+    {
+      
+      const datas = await Promise.all([
+        d3.csv('data/all_data.csv', row => ({
+            team: getTeam(row),
+            rank: getRank(row),
+            year: getYear(row),
+            onBase: getOBP(row),
+            
+      }))]);
+      const data = datas.flat()
+      
     setData(data);
+    })();
   }, []);
 
   return data;
 };
 function App() {
   const data = useData();
-  const [currentYear, setCurrentYear] = useState(1970);
+  const [currentYear, setCurrentYear] = useState(1940);
+  const [finalData, setFinalData] = useState([])
+  const test = useRef([])
 
-  const yearIndex = d3
-    .scaleOrdinal()
-    .domain(d3.range(1970, 2025))
-    .range(d3.range(0, 2025-1970));
   //main animation a simple counter
   useEffect(() => {
     const interval = d3.interval(() => {
       setCurrentYear(year => {
-        if(year +1 > 2025){
+        if(year +1 > 2019){
           interval.stop();
         }
+        
+      
         return year + 1;
       });
-    }, 3000);
-
+    }, 2500);
+    
     return () => interval.stop();
-  }, []);
+    
+  }, [data]);
 
+
+  useEffect(() => {
+    
+    let dict = []  
+      
+    for (let d in data){
+      if(data[d].year === currentYear){
+        //first iteration
+        dict.push({
+          team: data[d].team,
+          rank: data[d].rank,
+          year: data[d].year,
+          onBase: data[d].onBase,
+        })   
+      }
+    }
+
+    test.current=dict
+  },[currentYear,data])
+ 
   return (
     <Svg>
       {data ? (
-        <Barchart data={data[yearIndex(currentYear)]} x={100} y={50} barThickness={20} width={500} />
+        
+        <Barchart data={test.current}
+        x={140} 
+        y={50} 
+        barThickness={20} 
+        width={300} />
       ) : null}
+      <Year x={"95%"} y={"95%"} >{currentYear}</Year>
     </Svg>
   );
 }
