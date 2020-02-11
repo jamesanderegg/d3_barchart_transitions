@@ -20,6 +20,15 @@ const EndLabel = styled.text`
   text-anchor: start;
   alignment-baseline: middle;
 `;
+const WorldSeries = styled.text`
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  text-anchor: start;
+  alignment-baseline: middle;
+`;
 
 const useTransition = ( {targetValue, name, startValue, easing }) => {
   const [renderValue, setRenderValue] = useState(startValue || targetValue);
@@ -39,19 +48,18 @@ const useTransition = ( {targetValue, name, startValue, easing }) => {
     return renderValue;
 };
 
-const Bar = ({ data, y, width, thickness, color }) => {
+const Bar = ({ data, y, width, thickness, color, worldSeries }) => {
 
-   
     const renderWidth = useTransition({ 
       targetValue: width,
       name: `width-${data.team}`,
-      easing: d3.easeExpInOut
+      easing: d3.easeCubicInOut
     });
 
     const renderY = useTransition({
       targetValue: y,
       name: `y-${data.team}`,
-      startValue: 500,
+      startValue: 350,
       easing:d3.easeCubicInOut
     });
     const renderX = useTransition({
@@ -60,11 +68,16 @@ const Bar = ({ data, y, width, thickness, color }) => {
         startValue: 0,
         easing:d3.easeCubicInOut
     });
-
+    
   return (
     <g transform={`translate(${renderX}, ${renderY})`}>
+      
     <Label y={thickness / 2}>{data.team}</Label>
       <rect x={10} y={0} width={renderWidth} height={thickness} fill={color} />
+      {data.team === worldSeries.winning ? 
+      <WorldSeries y ={thickness/2} x={renderWidth +70} fill={color}>World Series Loser</WorldSeries> : null }
+      {data.team === worldSeries.losing ? 
+      <WorldSeries y ={thickness/2} x={renderWidth +70} fill={color}>World Series Champion</WorldSeries> : null }
       <EndLabel y={thickness/2 } x= {renderWidth + 15}>
         {data.onBase}
       </EndLabel>
@@ -72,10 +85,9 @@ const Bar = ({ data, y, width, thickness, color }) => {
   );
 };
 //draws for single year
-const Barchart = ({ data, x, y, barThickness, width }) => {
+const Barchart = ({ data, x, y, barThickness, width, worldSeries }) => {
   //create scale for vertical alignment
   
-
   const yScale = d3
     .scaleBand()
     .domain( d3.range(0, data.length))
@@ -126,6 +138,7 @@ const Barchart = ({ data, x, y, barThickness, width }) => {
           formatter={formatter}
           thickness={yScale.bandwidth()}
           color={color(d.team) || 'white'}
+          worldSeries={worldSeries}
         />
       ))}
     </g>

@@ -19,6 +19,16 @@ font-size: 120px;
 font-weight: bold;
 text-anchor: end;
 `;
+
+const Title = styled.text`
+fill: white;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
+font-size: 36px;
+font-weight: bold;
+text-anchor: middle;
+`;
 const getTeam = row =>
   (row['team']);
 const getYear = row =>
@@ -27,26 +37,36 @@ const getRank = row =>
   Number(row['rank']);
 const getOBP = row =>
     Number(row['obp']);
+
+const getWorldSeriesYear = row =>
+  Number(row['Year']);
+const winningTeam = row =>
+  (row['Winning team']);
+const losingTeam = row =>
+  (row['Losing team']);
+    
 const useData = () => {
   const [data, setData] = useState(null);
-
-
   useEffect(function()
   {
     (async () => 
     {
-      
-      const datas = await Promise.all([
-        d3.csv('data/all_data.csv', row => ({
-            team: getTeam(row),
-            rank: getRank(row),
-            year: getYear(row),
-            onBase: getOBP(row),
-            
-      }))]);
+      const datas = await Promise.all(
+        [
+          d3.csv('data/all_data.csv', row => ({
+              team: getTeam(row),
+              rank: getRank(row),
+              year: getYear(row),
+              onBase: getOBP(row),        
+          })),
+          d3.csv('data/winningLosing.csv', row => ({
+            winning: winningTeam(row),
+            winningYear: getWorldSeriesYear(row),
+            losing: losingTeam(row),        
+        })) 
+        ]);
       const data = datas.flat()
-      
-    setData(data);
+      setData(data);
     })();
   }, []);
 
@@ -54,9 +74,9 @@ const useData = () => {
 };
 function App() {
   const data = useData();
-  const [currentYear, setCurrentYear] = useState(1940);
-  const [finalData, setFinalData] = useState([])
-  const test = useRef([])
+  const [currentYear, setCurrentYear] = useState(1939);
+  const finalData = useRef([])
+  const worldSeries = useRef({})
 
   //main animation a simple counter
   useEffect(() => {
@@ -64,23 +84,20 @@ function App() {
       setCurrentYear(year => {
         if(year +1 > 2019){
           interval.stop();
-        }
-        
-      
+        }       
         return year + 1;
       });
-    }, 2500);
-    
-    return () => interval.stop();
-    
+    }, 4000);
+    return () => interval.stop();  
   }, [data]);
 
 
   useEffect(() => {
+    let dict = []
+    let winner = []
     
-    let dict = []  
-      
     for (let d in data){
+      
       if(data[d].year === currentYear){
         //first iteration
         dict.push({
@@ -88,24 +105,33 @@ function App() {
           rank: data[d].rank,
           year: data[d].year,
           onBase: data[d].onBase,
-        })   
+        })  
       }
+      if(data[d].winningYear === currentYear){
+        winner=data[d]
+      } 
     }
-
-    test.current=dict
+    worldSeries.current=winner
+    finalData.current=dict
   },[currentYear,data])
  
+  
   return (
     <Svg>
-      {data ? (
-        
-        <Barchart data={test.current}
+    <Title x={"50%"} y={35}> MLB Regular Season: On Base Percentage</Title>
+    
+      {data ? (     
+        <Barchart 
+        data={finalData.current}
         x={140} 
         y={50} 
         barThickness={20} 
-        width={300} />
+        width={300}
+        worldSeries={worldSeries.current} />
+        
       ) : null}
-      <Year x={"95%"} y={"95%"} >{currentYear}</Year>
+      
+      <Year x={"95%"} y={"95%"} >{currentYear-1}</Year>
     </Svg>
   );
 }
