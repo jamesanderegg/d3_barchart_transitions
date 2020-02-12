@@ -5,8 +5,8 @@ import * as d3 from "d3";
 import Barchart from "./Barchart";
 
 const Svg = styled.svg`
-  width: 100vw;
-  height: 100vh;
+  width: 70vw;
+  height: 95vh;
   background: #0b0c10;
 `;
 
@@ -15,17 +15,24 @@ fill: white;
 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
     "Helvetica Neue", sans-serif;
-font-size: 120px;
+font-size: 70px;
 font-weight: bold;
 text-anchor: end;
 `;
-
+const Legend = styled.text`
+fill: white;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
+font-size: 17px;
+font-weight: bold;
+`;
 const Title = styled.text`
 fill: white;
 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
     "Helvetica Neue", sans-serif;
-font-size: 36px;
+font-size: 30px;
 font-weight: bold;
 text-anchor: middle;
 `;
@@ -87,7 +94,7 @@ function App() {
         }       
         return year + 1;
       });
-    }, 4000);
+    }, 3000);
     return () => interval.stop();  
   }, [data]);
 
@@ -118,20 +125,22 @@ function App() {
   
   return (
     <Svg>
-    <Title x={"50%"} y={35}> MLB Regular Season: On Base Percentage</Title>
+    <Title x={"50%"} y={35}> MLB Regular Season</Title>
+    <Title x={"50%"} y={75}> On Base Percentage</Title>
     
       {data ? (     
         <Barchart 
         data={finalData.current}
         x={140} 
-        y={50} 
+        y={100} 
         barThickness={20} 
-        width={300}
+        width={200}
         worldSeries={worldSeries.current} />
         
       ) : null}
-      
-      <Year x={"95%"} y={"95%"} >{currentYear-1}</Year>
+      <Legend x={"1%"} y={"94%"}>World Series Champion: &#11088;</Legend>
+      <Legend x={"1%"} y={"98%"}>World Series Loser: &#9734;</Legend>
+      <Year x={"95%"} y={"99%"} >{currentYear-1}</Year>
     </Svg>
   );
 }
