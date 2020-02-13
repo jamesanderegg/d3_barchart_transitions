@@ -70,7 +70,7 @@ const Bar = ({ data, y, width, thickness, color, worldSeries }) => {
 
   return (
     <g transform={`translate(${renderX}, ${renderY})`}>
-      <Label y={thickness / 2}>{data.team}</Label>
+      <Label y={thickness / 2}>{data.team.split(' ')[1]}</Label>
       <rect x={10} y={0} width={renderWidth} height={thickness} fill={color} />
       {data.team === worldSeries.winning ? (
         <WorldSeries y={thickness / 2} x={renderWidth + 50} fill={color}>

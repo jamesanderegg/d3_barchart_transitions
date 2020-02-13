@@ -5,9 +5,12 @@ import * as d3 from "d3";
 import Barchart from "./Barchart";
 
 const Svg = styled.svg`
-  width: 70vw;
-  height: 95vh;
+  width: 40%;
+  min-width: 350px;
+  min-height: 760px;
   background: #0b0c10;
+  display: flex;
+  margin:  5px auto;
 `;
 
 const Year = styled.text`
@@ -15,7 +18,7 @@ fill: white;
 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
     "Helvetica Neue", sans-serif;
-font-size: 70px;
+font-size: 50px;
 font-weight: bold;
 text-anchor: end;
 `;
@@ -94,7 +97,7 @@ function App() {
         }       
         return year + 1;
       });
-    }, 3000);
+    }, 2200);
     return () => interval.stop();  
   }, [data]);
 
@@ -124,24 +127,26 @@ function App() {
  
   
   return (
-    <Svg>
-    <Title x={"50%"} y={35}> MLB Regular Season</Title>
-    <Title x={"50%"} y={75}> On Base Percentage</Title>
     
-      {data ? (     
-        <Barchart 
-        data={finalData.current}
-        x={140} 
-        y={100} 
-        barThickness={20} 
-        width={200}
-        worldSeries={worldSeries.current} />
-        
-      ) : null}
-      <Legend x={"1%"} y={"94%"}>World Series Champion: &#11088;</Legend>
-      <Legend x={"1%"} y={"98%"}>World Series Loser: &#9734;</Legend>
-      <Year x={"95%"} y={"99%"} >{currentYear-1}</Year>
-    </Svg>
+      <Svg>
+      <Title x={"50%"} y={35}> MLB Regular Season</Title>
+      <Title x={"50%"} y={75}> On Base Percentage</Title>
+      
+        {data ? (     
+          <Barchart 
+          data={finalData.current}
+          x={65} 
+          y={150} 
+          barThickness={20} 
+          width={200}
+          worldSeries={worldSeries.current} />
+          
+        ) : null}
+        <Legend x={"1%"} y={"15%"}>World Series Champion: &#11088;</Legend>
+        <Legend x={"1%"} y={"18%"}>World Series Loser: &#9734;</Legend>
+        <Year x={"99%"} y={"18%"} >{currentYear-1}</Year>
+      </Svg>
+    
   );
 }
 
